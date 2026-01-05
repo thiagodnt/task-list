@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import './App.css';
 
 function App() {
@@ -8,6 +8,13 @@ function App() {
 		enabled: false,
 		task: '',
 	});
+
+	useEffect(() => {
+		const localTaskList = localStorage.getItem('@task-list');
+		if (localTaskList) {
+			setTasks(JSON.parse(localTaskList));
+		}
+	}, []);
 
 	function handleAdicionar(e: FormEvent): void {
 		e.preventDefault();
@@ -19,6 +26,8 @@ function App() {
 
 		setTasks((t) => [...t, input]);
 		setInput('');
+
+		localStorage.setItem('@task-list', JSON.stringify([...tasks, input]));
 	}
 
 	function handleEditar(item: string): void {
@@ -40,10 +49,14 @@ function App() {
 			task: '',
 		});
 		setInput('');
+
+		localStorage.setItem('@task-list', JSON.stringify(allTasks));
 	}
 
 	function handleRemover(item: string): void {
-		setTasks((prevTasks) => prevTasks.filter((task) => task !== item));
+		const allTasks = tasks.filter((task) => task !== item);
+		setTasks(allTasks);
+		localStorage.setItem('@task-list', JSON.stringify(allTasks));
 	}
 
 	return (
