@@ -18,10 +18,20 @@ body {
 	padding: 10px;
 }
 
-h1 {
+.title {
 	color: #fff;
 	margin-bottom: 2rem;
 	text-align: center;
+}
+
+.task-count {
+	color: #fff;
+	margin-top: 2rem;
+	font-size: 1rem;
+}
+
+hr {
+	margin-top: 2rem;
 }
 
 form {

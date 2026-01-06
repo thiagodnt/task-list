@@ -1,16 +1,21 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import './App.css';
 
 function App() {
-	const inputRef = useRef<HTMLInputElement>(null);
-	const firstRenderRef = useRef<boolean>(true);
-
 	const [input, setInput] = useState<string>('');
 	const [tasks, setTasks] = useState<string[]>([]);
 	const [editTask, setEditTask] = useState({
 		enabled: false,
 		task: '',
 	});
+
+	const inputRef = useRef<HTMLInputElement>(null);
+	const firstRenderRef = useRef<boolean>(true);
+
+	// Aqui é só pra demonstração, já que o ideal é utilizá-lo para operações custosas
+	const qtdTarefasMemo = useMemo(() => {
+		return tasks.length;
+	}, [tasks]);
 
 	useEffect(() => {
 		const localTaskList = localStorage.getItem('@task-list');
@@ -72,7 +77,7 @@ function App() {
 
 	return (
 		<div className="container">
-			<h1>Gerenciador de Tarefas</h1>
+			<h1 className="title">Gerenciador de Tarefas</h1>
 			<form onSubmit={handleAdicionar}>
 				<label>
 					<input
@@ -88,6 +93,12 @@ function App() {
 					{editTask.enabled ? 'Salvar' : 'Adicionar Tarefa'}
 				</button>
 			</form>
+			<hr />
+			<h1 className="task-count">
+				{qtdTarefasMemo > 0
+					? `Você tem ${qtdTarefasMemo} tarefa(s)!`
+					: 'Nenhuma tarefa cadastrada'}
+			</h1>
 			{tasks.map((task, index) => (
 				<section key={index} className="task-list">
 					<span>{task}</span>
