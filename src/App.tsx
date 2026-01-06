@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import {
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+	type FormEvent,
+} from 'react';
 import './App.css';
 
 function App() {
@@ -37,17 +44,20 @@ function App() {
 		localStorage.setItem('@task-list', JSON.stringify(tasks));
 	}, [tasks]);
 
-	function handleAdicionar(e: FormEvent): void {
-		e.preventDefault();
+	const handleAdicionar = useCallback(
+		(e: FormEvent): void => {
+			e.preventDefault();
 
-		if (editTask.enabled) {
-			handleSalvarEditar();
-			return;
-		}
+			if (editTask.enabled) {
+				handleSalvarEditar();
+				return;
+			}
 
-		setTasks((t) => [...t, input]);
-		setInput('');
-	}
+			setTasks((t) => [...t, input]);
+			setInput('');
+		},
+		[tasks, input]
+	);
 
 	function handleEditar(item: string): void {
 		setInput(item);
