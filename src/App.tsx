@@ -1,7 +1,10 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import './App.css';
 
 function App() {
+	const inputRef = useRef<HTMLInputElement>(null);
+	const firstRenderRef = useRef<boolean>(true);
+
 	const [input, setInput] = useState<string>('');
 	const [tasks, setTasks] = useState<string[]>([]);
 	const [editTask, setEditTask] = useState({
@@ -16,6 +19,19 @@ function App() {
 		}
 	}, []);
 
+	useEffect(() => {
+		inputRef.current?.focus();
+	}, [tasks]);
+
+	useEffect(() => {
+		if (firstRenderRef.current) {
+			firstRenderRef.current = false;
+			return;
+		}
+
+		localStorage.setItem('@task-list', JSON.stringify(tasks));
+	}, [tasks]);
+
 	function handleAdicionar(e: FormEvent): void {
 		e.preventDefault();
 
@@ -26,8 +42,6 @@ function App() {
 
 		setTasks((t) => [...t, input]);
 		setInput('');
-
-		localStorage.setItem('@task-list', JSON.stringify([...tasks, input]));
 	}
 
 	function handleEditar(item: string): void {
@@ -49,14 +63,11 @@ function App() {
 			task: '',
 		});
 		setInput('');
-
-		localStorage.setItem('@task-list', JSON.stringify(allTasks));
 	}
 
 	function handleRemover(item: string): void {
 		const allTasks = tasks.filter((task) => task !== item);
 		setTasks(allTasks);
-		localStorage.setItem('@task-list', JSON.stringify(allTasks));
 	}
 
 	return (
@@ -70,10 +81,11 @@ function App() {
 						value={input}
 						onChange={(e) => setInput(e.target.value)}
 						required
+						ref={inputRef}
 					/>
 				</label>
 				<button type="submit">
-					{editTask.enabled ? 'Editar Tarefa' : 'Adicionar Tarefa'}
+					{editTask.enabled ? 'Salvar' : 'Adicionar Tarefa'}
 				</button>
 			</form>
 			{tasks.map((task, index) => (
